@@ -1,0 +1,16 @@
+{
+  "name": "@metafold/threejs",
+  "version": "0.1.0",
+  "description": "Metafold three.js addon",
+  "scripts": {
+    "lint": "eslint --ext '.js' .",
+    "build": "node build.mjs"
+  },
+  "repository": "git+https://github.com/Metafold3d/metafold-three.js.git",
+  "author": "Metafold 3D",
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.20.2",
+    "eslint": "^8.57.0"
+  }
+}
