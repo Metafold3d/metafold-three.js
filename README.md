@@ -14,9 +14,9 @@ volume that is rendered using a `VolumeRenderPass`.
 ## Usage
 
 > [!IMPORTANT]
-> Note that using this example may consume account import/export tokens!
+> Using this example may consume import/export tokens from your account.
 
-To run locally:
+Run a HTTP server to serve files locally, e.g.:
 
 ```
 npx serve
@@ -29,8 +29,8 @@ Or access a hosted version at https://metafold3d.github.io/metafold-three.js/.
 As this demo app runs entirely on the client side, we leave the work of secure authentication to the
 Metafold app. You can find your secret access token on your [account page][].
 
-We recommend keeping the access token secret in production by storing it securely on the server-side
-**only**. This could be done using a framework such as [Next.js](https://nextjs.org/).
+We recommend keeping the access token secret in production by storing it securely on the
+**server-side only**. This could be done using a framework such as [Next.js](https://nextjs.org/).
 
 For users interested in building an application on the Metafold platform, please contact
 [info@metafold3d.com](mailto:info@metafold3d.com). We are currently planning work to enable
