@@ -14,7 +14,7 @@ Include the following imports in the HTML head element, adjusting version number
       "imports": {
         "three": "https://unpkg.com/three@0.162.0/build/three.module.js",
         "three/addons/": "https://unpkg.com/three@0.162.0/examples/jsm/",
-        "@metafold/threejs/": "https://unpkg.com/@metafold/threejs@0.1.0/dist/"
+        "@metafold/threejs": "https://unpkg.com/@metafold/threejs@0.1.0/dist/main.js"
       }
     }
   </script>
@@ -56,7 +56,6 @@ volumeData.fill(127)
 
 const volumeRenderPass = new VolumeRenderPass(camera, width, height, volumeData, {
   size: new THREE.Vector3(2.0, 2.0, 2.0),
-  offset: new THREE.Vector3(-1.0, -1.0, -1.0),
   // The resolution *must* match the volume data length
   resolution: new THREE.Vector3(64, 64, 64),
 })
