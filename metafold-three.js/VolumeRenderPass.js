@@ -62,6 +62,7 @@ class VolumeRenderPass extends Pass {
 
     this.boxGeometry = new BoxGeometry(size.x, size.y, size.z)
     this.boxMesh = new Mesh(this.boxGeometry, this.volumeRenderMaterial)
+    this.boxMesh.matrixAutoUpdate = false
 
     this.compositeMaterial = new ShaderMaterial({
       uniforms: UniformsUtils.clone(CompositeShader.uniforms),
@@ -136,6 +137,8 @@ class VolumeRenderPass extends Pass {
       // Render to temporary render target and copy to write buffer. This is necessary because the
       // EffectComposer read/write buffers point to the same target (can't read from and write to
       // the same target in the same draw call)!
+
+      // FIXME(ryan): Without a RenderPass beforehand this produces a blank buffer
       renderer.setRenderTarget(this.copyRenderTarget)
       this.fsQuad.material = this.compositeMaterial
       this.fsQuad.render(renderer)
@@ -181,8 +184,18 @@ class VolumeRenderPass extends Pass {
       this.boxGeometry.dispose()
       this.boxGeometry = new BoxGeometry(size.x, size.y, size.z)
       this.boxMesh = new Mesh(this.boxGeometry, this.volumeRenderMaterial)
+      this.boxMesh.matrixAutoUpdate = false
       this.volumeRenderMaterial.uniforms.volumeSize.value.copy(size)
     }
+  }
+
+  get matrix() {
+    return this.boxMesh.matrix
+  }
+
+  set matrix(m) {
+    this.boxMesh.matrix.copy(m)
+    this.boxMesh.matrixWorldNeedsUpdate = true
   }
 
   get visible() {
