@@ -18,6 +18,8 @@ import {
   VolumeRenderShader,
   ProjectionType_Perspective,
   ProjectionType_Orthographic,
+  Matcap_Disabled,
+  Matcap_Enabled,
 } from "./VolumeRenderShader.js"
 import { CompositeShader } from "./CompositeShader.js"
 
@@ -46,7 +48,7 @@ class VolumeRenderPass extends Pass {
     this.volumeTexture.magFilter = LinearFilter
     this.volumeTexture.needsUpdate = true
 
-    this.volumeRenderTarget = new WebGLRenderTarget(VOLUME_RENDER_SIZE, VOLUME_RENDER_SIZE)
+    this.volumeRenderTarget = new WebGLRenderTarget(1024, 1024)
     this.volumeRenderTarget.depthTexture = new DepthTexture()
     this.volumeRenderMaterial = new ShaderMaterial({
       defines: Object.assign({}, VolumeRenderShader.defines),
@@ -59,6 +61,8 @@ class VolumeRenderPass extends Pass {
     // viewToWorldMat/viewToModelMat are set before render
     this.volumeRenderMaterial.uniforms.shapeData.value = this.volumeTexture
     this.volumeRenderMaterial.uniforms.volumeSize.value.copy(size)
+
+    this.matcapTexture = null
 
     this.boxGeometry = new BoxGeometry(size.x, size.y, size.z)
     this.boxMesh = new Mesh(this.boxGeometry, this.volumeRenderMaterial)
@@ -99,6 +103,9 @@ class VolumeRenderPass extends Pass {
     this.volumeTexture.dispose()
     this.volumeRenderTarget.dispose()
     this.volumeRenderMaterial.dispose()
+
+    if (this.matcapTexture)
+      this.matcapTexture.dispose()
   }
 
   /* eslint no-unused-vars: ["error", { "argsIgnorePattern": "^_" }] */
@@ -153,6 +160,21 @@ class VolumeRenderPass extends Pass {
     this.copyRenderTarget.setSize(width, height)
   }
 
+  setVolumeTextureSize(width, height) {
+    this.volumeRenderTarget.setSize(width, height)
+  }
+
+  setMatcapTexture(tex) {
+    if (tex) {
+      this.matcapTexture = tex
+      this.volumeRenderMaterial.uniforms.matcap.value = this.matcapTexture
+      this.volumeRenderMaterial.uniforms.enableMatcap.value = Matcap_Enabled
+    } else {
+      this.volumeRenderMaterial.uniforms.matcap.value = null
+      this.volumeRenderMaterial.uniforms.enableMatcap.value = Matcap_Disabled
+    }
+  }
+
   setVolume(volumeData, { size, resolution }) {
     if (resolution.x !== this.volumeTexture.image.width
         || resolution.y !== this.volumeTexture.image.height
@@ -204,6 +226,14 @@ class VolumeRenderPass extends Pass {
 
   set visible(v) {
     this.boxMesh.visible = v
+  }
+
+  get baseColor() {
+    return this.volumeRenderMaterial.uniforms.baseColor.value
+  }
+
+  set baseColor(c) {
+    this.volumeRenderMaterial.uniforms.baseColor.value.copy(c)
   }
 }
 

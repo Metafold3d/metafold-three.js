@@ -3,6 +3,9 @@ import { Color, Matrix4, Vector3 } from "three"
 const ProjectionType_Perspective = 0
 const ProjectionType_Orthographic = 1
 
+const Matcap_Disabled = 0
+const Matcap_Enabled = 1
+
 const VolumeRenderShader = {
   defines: {
     // Add compile-time definitions here, e.g.
@@ -14,6 +17,8 @@ const VolumeRenderShader = {
     viewToModelMat: { value: new Matrix4() },
     volumeSize: { value: new Vector3() },
     baseColor: { value: new Color(0xffffff) },
+    matcap: { value: null },
+    enableMatcap: { value: Matcap_Disabled },
     projectionType: { value: ProjectionType_Perspective },
   },
   vertexShader: `
@@ -28,6 +33,7 @@ void main()
 `,
   fragmentShader: `
 precision highp sampler3D;
+precision mediump sampler2D;
 
 uniform sampler3D shapeData;
 
@@ -38,6 +44,8 @@ uniform mat4 viewToWorldMat;
 uniform mat4 viewToModelMat;
 uniform vec3 volumeSize;
 uniform vec3 baseColor;
+uniform sampler2D matcap;
+uniform int enableMatcap;
 uniform int projectionType;
 
 in vec3 viewPosition;
@@ -117,6 +125,8 @@ vec3 colorAt(vec3 p)
 {
     vec3 norm = normalAt(p);
     vec2 uv = (norm).xy * 0.5 + 0.5;
+    if (enableMatcap != 0)
+      return baseColor * textureLod(matcap, uv, 0.0).xyz;
     return baseColor * vec3(mix(0.2, 0.8, uv.y));
 }
 
@@ -226,4 +236,10 @@ void main()
 `
 }
 
-export { VolumeRenderShader, ProjectionType_Perspective, ProjectionType_Orthographic }
+export {
+  VolumeRenderShader,
+  ProjectionType_Perspective,
+  ProjectionType_Orthographic,
+  Matcap_Disabled,
+  Matcap_Enabled,
+}
