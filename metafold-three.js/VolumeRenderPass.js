@@ -23,9 +23,6 @@ import {
 } from "./VolumeRenderShader.js"
 import { CompositeShader } from "./CompositeShader.js"
 
-// Volume is rendered to fixed-size render target to improve viewport performance
-const VOLUME_RENDER_SIZE = 1024
-
 class VolumeRenderPass extends Pass {
   constructor(camera, width, height, volumeData, { size, resolution }) {
     super()
